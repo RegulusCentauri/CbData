@@ -6,7 +6,7 @@ namespace OrderAggregator
     {
         readonly IOrderCache _orderRepository;
         readonly ILogger<OrderAggregationService> _logger;
-        readonly TimeSpan _aggregationInterval = TimeSpan.FromSeconds(20);
+        readonly TimeSpan _aggregationInterval = TimeSpan.FromSeconds(20); //Upgrade suggestion: Move to appsettings, so the param is configurable
 
         JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = false };
 
@@ -24,9 +24,9 @@ namespace OrderAggregator
 
                     var aggregatedOrders = _orderRepository.GetAggregatedOrders();
                     if(aggregatedOrders.Any()) {
-                        var aggregatedOrderList = aggregatedOrders.Select(kvp => new AggregatedOrder {
-                            ProductId = kvp.Key,
-                            TotalQuantity = kvp.Value
+                        var aggregatedOrderList = aggregatedOrders.Select(ao => new Order {
+                            ProductId = ao.Key,
+                            Quantity = ao.Value
                         }).ToList();
 
                         var json = JsonSerializer.Serialize(aggregatedOrderList, jsonSerializerOptions);
