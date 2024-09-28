@@ -17,6 +17,10 @@ namespace OrderAggregator
         //Upgrade suggestion: Adding an extra security layer to make sure the service can't be called by just anybody - ApiKey header or something along those lines
         [HttpPost("PostOrders")]
         public IActionResult PostOrders([FromBody] List<Order> orders) {
+            return HandleIncomingOrders(orders);
+        }
+
+        public IActionResult HandleIncomingOrders(List<Order> orders) {
             try {
                 if(orders == null || !orders.Any()) {
                     _logger.LogWarning("Empty order list received");
@@ -41,7 +45,7 @@ namespace OrderAggregator
             }
             catch(Exception e) {
                 _logger.LogInformation($"Exception thrown: {e}");
-                return Problem(detail: $"{e}", title:"Unexpected error");
+                return Problem(detail: $"{e}", title: "Unexpected error");
             }
         }
     }
